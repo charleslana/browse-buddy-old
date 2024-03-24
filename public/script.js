@@ -2,7 +2,6 @@ const actions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   handleAddEventListener();
-  handleTheme();
   handleClearButton();
   handleModalClick();
   handleActionModal();
@@ -59,15 +58,6 @@ function isValidURL(url) {
     return true;
   }
   return false;
-}
-
-function handleTheme() {
-  document.querySelectorAll('.theme-button').forEach(function (button) {
-    button.addEventListener('click', function () {
-      const theme = this.getAttribute('data-t');
-      document.documentElement.setAttribute('data-theme', theme);
-    });
-  });
 }
 
 function handleClearButton() {

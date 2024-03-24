@@ -1,7 +1,7 @@
 {
   "name": "browse-buddy",
   "version": "1.0.0",
-  "description": "",
+  "description": "Easily set up test automation",
   "main": "build/index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
@@ -12,7 +12,11 @@
     "build": "npm run tsc && electron-builder",
     "start": "electron ./build",
     "dev": "npm run tsc && npm run start",
-    "win": "electron-builder --win"
+    "win": "electron-builder --win",
+    "release": "npm run tsc && electron-builder -mlw portable --config=electron-builder.json",
+    "release-linux": "npm run tsc && electron-builder -l --config=electron-builder.json",
+    "release-win": "npm run tsc && electron-builder -w portable --config=electron-builder.json",
+    "release-mac": "npm run tsc && electron-builder -m --config=electron-builder.json"
   },
   "build": {
     "productName": "browse-buddy",
@@ -60,6 +64,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "electron-store": "^8.2.0",
     "puppeteer": "^22.6.0",
     "winston": "^3.12.0"
   },

@@ -1,21 +1,8 @@
 import { Core } from '@core/Core';
 import { generateUUID } from '@utils/utils';
+import { IAction, ITest } from '@interface/ITest';
 
 const core = new Core();
-
-interface IAction {
-  id: string;
-  action: 'wait-click' | 'click' | 'fill' | ' type';
-  element: string;
-  text?: string;
-}
-
-interface ITest {
-  url: string;
-  isSaveLastScreenshot: boolean;
-  isSaveEveryScreenshot: boolean;
-  actions: IAction[];
-}
 
 export async function navigate(test: ITest): Promise<void> {
   await core.navigate(test.url, test.isSaveEveryScreenshot);

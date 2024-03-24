@@ -1,28 +1,15 @@
 import path from 'path';
-import { app, BrowserWindow, globalShortcut, ipcMain, Menu, shell } from 'electron';
-import { navigate } from './puppeterTest';
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { getThemeModePreference, setThemeModePreference } from '@utils/storeUtils';
+import { handleMenu } from '@electron/menu';
+import { navigate } from './runTest';
 
-let win: BrowserWindow | null;
+let mainWindow: BrowserWindow;
 
 function createWindow() {
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: getAppIconPath(),
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-  win.loadURL(`file://${__dirname}/index.html`);
-  if (process.env.DEVTOOLS === 'true') {
-    win.webContents.openDevTools();
-  }
-  win.maximize();
-  globalShortcut.register('CommandOrControl+Shift+I', () => {
-    win!.webContents.openDevTools();
-  });
-  handleMenu();
+  handleCreateWindow();
+  handleMenu(mainWindow);
+  handleDarkMode();
 }
 
 app.on('ready', createWindow);
@@ -37,6 +24,38 @@ ipcMain.on('navigate', (e, test) => {
     });
 });
 
+ipcMain.on('dark-mode:dark', () => {
+  nativeTheme.themeSource = 'dark';
+  setThemeModePreference('dark');
+});
+
+ipcMain.on('dark-mode:light', () => {
+  nativeTheme.themeSource = 'light';
+  setThemeModePreference('light');
+});
+
+ipcMain.on('dark-mode:', () => {
+  nativeTheme.themeSource = 'system';
+  setThemeModePreference('system');
+});
+
+function handleCreateWindow() {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: getAppIconPath(),
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  if (process.env.DEVTOOLS === 'true') {
+    mainWindow.webContents.openDevTools();
+  }
+  mainWindow.maximize();
+}
+
 function getAppIconPath() {
   let iconFileName = '';
   if (process.platform === 'linux') {
@@ -47,87 +66,7 @@ function getAppIconPath() {
   return path.join(__dirname, 'assets', iconFileName);
 }
 
-function handleMenu(): void {
-  Menu.setApplicationMenu(null);
-  const template: Electron.MenuItemConstructorOptions[] = [
-    {
-      label: 'Browse Buddy',
-      submenu: [
-        {
-          label: 'Recarregar',
-          accelerator: 'CmdOrCtrl+R',
-          click: () => {
-            win!.reload();
-          },
-        },
-        { type: 'separator' },
-        {
-          label: 'Fechar',
-          accelerator: 'CmdOrCtrl+W',
-          click: () => {
-            win!.close();
-          },
-        },
-      ],
-    },
-    {
-      label: 'Ajuda',
-      submenu: [
-        {
-          label: 'Documentação',
-          click: () => {
-            shell.openExternal('https://example.com');
-          },
-        },
-        {
-          label: 'GitHub',
-          click: () => {
-            shell.openExternal('https://example.com');
-          },
-        },
-        {
-          label: 'Discord',
-          click: () => {
-            shell.openExternal('https://example.com');
-          },
-        },
-        {
-          label: 'Reportar um problema',
-          click: () => {
-            shell.openExternal('https://example.com');
-          },
-        },
-        { type: 'separator' },
-        {
-          label: 'Abrir DevTools',
-          accelerator: 'CmdOrCtrl+Shift+I',
-          click: () => {
-            win!.webContents.openDevTools();
-          },
-        },
-        { type: 'separator' },
-        {
-          label: 'Sobre',
-          click: () => {
-            const aboutWindow = new BrowserWindow({
-              width: 400,
-              height: 300,
-              title: 'Sobre',
-              webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
-              },
-              autoHideMenuBar: true,
-              resizable: false,
-              maximizable: false,
-              minimizable: false,
-            });
-            aboutWindow.loadURL(`file://${__dirname}/about.html`);
-          },
-        },
-      ],
-    },
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
+function handleDarkMode() {
+  const isDarkModeEnabled = getThemeModePreference();
+  nativeTheme.themeSource = isDarkModeEnabled;
 }

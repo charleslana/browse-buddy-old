@@ -9,7 +9,10 @@ getById('execute-test')!.addEventListener('click', () => {
   const isSaveLastScreenshot = checkboxSaveLastScreenshot.checked;
   const isSaveEveryScreenshot = checkboxSaveEveryScreenshot.checked;
   const inputActions = getById('actions') as HTMLInputElement;
-  const actions = JSON.parse(inputActions.value);
+  let actions = [];
+  if (inputActions.value) {
+    actions = JSON.parse(inputActions.value);
+  }
   getById('overlay-loading')!.style.display = 'block';
   getById('success-notification')!.classList.add('is-hidden');
   getById('error-notification')!.classList.add('is-hidden');
@@ -36,4 +39,18 @@ ipcRenderer.on('navigate-error', (_event, message) => {
 
 function getById(id: string): HTMLElement | null {
   return document.getElementById(id);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  handleTheme();
+});
+
+function handleTheme() {
+  document.querySelectorAll('.theme-button').forEach(function (button) {
+    button.addEventListener('click', () => {
+      const theme = button.getAttribute('data-t');
+      document.documentElement.setAttribute('data-theme', theme!);
+      ipcRenderer.send(`dark-mode:${theme}`);
+    });
+  });
 }

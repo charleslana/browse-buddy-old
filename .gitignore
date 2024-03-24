@@ -16,3 +16,4 @@ dist/
 /npm-debug.log
 build/
 resources/
+release/
