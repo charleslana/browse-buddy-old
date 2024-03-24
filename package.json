@@ -1,0 +1,80 @@
+{
+  "name": "browse-buddy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix",
+    "clear": "rm -rf build",
+    "tsc": "npm run clear && node index.js && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./build && npm run copy-public",
+    "copy-public": "cp -r public/. build/",
+    "build": "npm run tsc && electron-builder",
+    "start": "electron ./build",
+    "dev": "npm run tsc && npm run start",
+    "win": "electron-builder --win"
+  },
+  "build": {
+    "productName": "browse-buddy",
+    "appId": "com.browse.buddy.charleslana",
+    "extraResources": [
+      ".env",
+      "resources/**/*"
+    ],
+    "asar": true,
+    "files": [
+      "./build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "public/assets/icon-256x256.png"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "public/assets/icon-256x256.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    }
+  },
+  "keywords": [
+    "snap",
+    "AppImage",
+    "deb",
+    "rpm"
+  ],
+  "author": {
+    "name": "charleslana",
+    "email": "charleslanatester@gmail.com",
+    "url": "https://github.com/charleslana"
+  },
+  "homepage": "https://github.com/charleslana",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "puppeteer": "^22.6.0",
+    "winston": "^3.12.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tscpaths": "^0.0.9",
+    "typescript": "^5.4.2"
+  }
+}

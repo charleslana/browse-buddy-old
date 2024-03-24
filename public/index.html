@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en" data-theme="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Buddy</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="stylesheet" href="lib/bulma.min.css" />
+    <link rel="stylesheet" href="lib/bulma-tooltip.min.css" />
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="navbar mb-5" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <span class="navbar-item">
+          <img src="assets/logo.png" alt="logo image" />
+        </span>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <div class="navbar-item is-hoverable">
+            <button class="button">
+              <span class="icon is-small">
+                <i class="fa-solid fa-moon"></i>
+              </span>
+              <span>Temas</span>
+            </button>
+            <div class="navbar-dropdown">
+              <a class="navbar-item theme-button" data-t="dark">
+                <button class="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-moon"></i>
+                  </span>
+                  <span>Tema escuro</span>
+                </button>
+              </a>
+              <a class="navbar-item theme-button" data-t="light">
+                <button class="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-sun"></i>
+                  </span>
+                  <span>Tema claro</span>
+                </button>
+              </a>
+              <a class="navbar-item theme-button" data-t="">
+                <button class="button">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-window-maximize"></i>
+                  </span>
+                  <span>Tema do sistema</span>
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="columns">
+        <!-- Primeira coluna que envolve duas boxes -->
+        <div class="column is-two-thirds mx-5">
+          <div class="box">
+            <div class="level">
+              <div class="level-left">
+                <button class="button is-responsive">Importar um teste já configurado</button>
+              </div>
+              <div class="level-right">
+                <button class="button is-ghost" id="clear-test">Limpar testes</button>
+              </div>
+            </div>
+          </div>
+          <div class="notification is-success is-light is-hidden" id="success-notification">
+            <button class="delete"></button>
+            <div class="buttons">
+              <p>O teste foi executado com sucesso.</p>
+              <button class="button is-primary is-dark is-small">Ver resultados</button>
+            </div>
+          </div>
+          <div class="notification is-danger is-light is-hidden" id="error-notification">
+            <button class="delete"></button>
+            <p id="error-log"></p>
+          </div>
+          <div class="box">
+            <div class="is-size-4 has-text-weight-bold mb-2">
+              <span><i class="fa-solid fa-route"></i></span>
+              <span>Navegar para</span>
+            </div>
+            <div class="is-flex is-align-items-center is-justify-content-space-between">
+              <button class="button is-info js-modal-trigger" data-target="modal-navigate">
+                Selecione a url
+              </button>
+              <div id="url">vazio</div>
+            </div>
+          </div>
+          <div class="box">
+            <div class="is-size-4 has-text-weight-bold mb-2">
+              <span><i class="fa-solid fa-computer-mouse"></i></span>
+              <span>Ações</span>
+            </div>
+            <button class="button is-info js-modal-trigger" data-target="modal-actions">
+              <span class="icon">
+                <i class="fa-solid fa-plus"></i>
+              </span>
+              <span>Selecione ação</span>
+            </button>
+            <div id="show-actions" class="py-4">
+              <!-- <div class="card is-fullwidth">
+                <header class="card-header card-toggle is-clickable">
+                  <p class="card-header-title">Clicar</p>
+                  <a class="card-header-icon">
+                    <i class="fa-solid fa-angle-down"></i>
+                  </a>
+                </header>
+                <div class="card-content is-hidden">
+                  <div class="content">#btn-display-inputs</div>
+                  <footer class="buttons">
+                    <button class="button card-footer-item is-primary">Editar</button>
+                    <button class="button card-footer-item is-danger">Excluir</button>
+                  </footer>
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <nav class="level">
+            <div class="level-left">
+              <p class="level-item">
+                <button class="button is-link" id="execute-test" disabled>Executar</button>
+              </p>
+            </div>
+            <div class="level-right">
+              <p class="level-item">
+                <button class="button is-success" id="save-test-button" disabled>
+                  Salvar teste
+                </button>
+              </p>
+            </div>
+          </nav>
+        </div>
+        <!-- Segunda coluna para as configurações de teste -->
+        <div class="column mx-5">
+          <div class="is-size-4 has-text-weight-bold mb-5">Configurações de execução</div>
+          <label class="checkbox mb-4">
+            <input type="checkbox" checked disabled />
+            Fechar sessão do navegador automaticamente
+          </label>
+          <label class="checkbox mb-4">
+            <input type="checkbox" checked id="checkbox-save-last-screenshot" />
+            Salvar tela de captura no final do teste
+          </label>
+          <label class="checkbox mb-4">
+            <input type="checkbox" checked id="checkbox-save-every-screenshot" />
+            Salvar tela de captura a cada ação
+          </label>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="actions" value="" />
+    <!-- Modal navigate -->
+    <div class="modal" id="modal-navigate">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Digite a url desejada</p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="notification is-danger is-light" id="modal-navigate-notification">
+            Informe uma url válida.
+          </div>
+          <input
+            class="input is-medium"
+            id="input-url"
+            type="text"
+            placeholder="https://example.com"
+          />
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-success" id="save-navigate">Salvar</button>
+            <button class="button">Cancelar</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- End modal navigate -->
+    <!-- Modal actions -->
+    <div class="modal" id="modal-actions">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <section class="modal-card-body">
+          <article class="panel is-primary">
+            <p class="panel-heading">Escolha ações</p>
+            <p class="panel-tabs">
+              <a class="is-active">Todas</a>
+              <a data-target="click">Clicar</a>
+              <a data-target="fill">Preencher</a>
+            </p>
+            <div class="panel-block">
+              <p class="control has-icons-left">
+                <input class="input is-primary" type="text" placeholder="Pesquisar" />
+                <span class="icon is-left">
+                  <i class="fas fa-search" aria-hidden="true"></i>
+                </span>
+              </p>
+            </div>
+            <a
+              class="panel-block is-active js-modal-trigger modal-click"
+              data-category="click"
+              data-target="modal-click"
+            >
+              <span class="panel-icon">
+                <i class="fa-solid fa-clock" aria-hidden="true"></i>
+              </span>
+              <span class="panel-icon">
+                <i class="fa-solid fa-computer-mouse" aria-hidden="true"></i>
+              </span>
+              Esperar e Clicar
+            </a>
+            <a class="panel-block is-active" data-category="fill">
+              <span class="panel-icon">
+                <i class="fa-solid fa-fill" aria-hidden="true"></i>
+              </span>
+              <span class="buttons">
+                <span>Preencher</span>
+                <span data-tooltip="Preenche o valor do campo ao invés de digitar"
+                  ><i class="fa-solid fa-circle-info is-size-7"></i
+                ></span>
+              </span>
+            </a>
+            <a class="panel-block is-active" data-category="fill">
+              <span class="panel-icon">
+                <i class="fa-regular fa-keyboard" aria-hidden="true"></i>
+              </span>
+              Digitar
+            </a>
+          </article>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button">Cancelar</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- End modal actions -->
+    <!-- Modal click -->
+    <div class="modal" id="modal-click">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">
+            <span><i class="fa-solid fa-computer-mouse"></i></span>
+            <span>Esperar e Clicar</span>
+          </p>
+          <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label">Selecione o Tipo</label>
+            <div class="select">
+              <select id="wait-click-type">
+                <option value="#">Tipo #id</option>
+                <option value=".">Tipo .classe</option>
+                <option value="xpath/">Tipo //xPath</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label"
+              >Apenas coloque o texto nos tipos id ou classe, o tipo já sera atribuído</label
+            >
+            <input
+              class="input is-medium"
+              id="wait-click-value"
+              type="text"
+              placeholder="elemento"
+            />
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="buttons">
+            <button class="button is-success" id="wait-click-save">Salvar</button>
+            <button class="button open-modal-actions">Voltar</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- End modal click -->
+    <!-- Loading -->
+    <div class="overlay" id="overlay-loading">
+      <div class="loading">
+        <p>Aguarde...</p>
+      </div>
+    </div>
+    <!-- End loading -->
+    <script>
+      var exports = {};
+    </script>
+    <script src="lib/bulma.js" charset="utf-8"></script>
+    <script src="lib/panelTabs.js" charset="utf-8"></script>
+    <script src="script.js" charset="utf-8"></script>
+    <script src="client.js" charset="utf-8"></script>
+  </body>
+</html>
