@@ -103,20 +103,21 @@ function handleWaitClick() {
   getById('wait-click-save').addEventListener('click', () => {
     const type = getById('wait-click-type').value;
     const element = getById('wait-click-value').value;
+    const id = generateUUID();
     actions.push({
-      id: generateUUID(),
+      id: id,
       action: 'wait-click',
       element: `${type}${element}`,
     });
     getById('actions').value = JSON.stringify(actions);
-    saveClick(`${type}${element}`);
+    saveClick(`${type}${element}`, id);
     getById('wait-click-value').value = '';
   });
 }
 
-function saveClick(element) {
+function saveClick(element, id) {
   const div = `
-  <div class="card is-fullwidth">
+  <div class="card is-fullwidth" data-id="${id}">
     <header class="card-header card-toggle is-clickable">
       <p class="card-header-title">Esperar e Clicar</p>
       <a class="card-header-icon">
@@ -126,14 +127,16 @@ function saveClick(element) {
     <div class="card-content is-hidden">
       <div class="content">${element}</div>
       <footer class="buttons">
-        <button class="button card-footer-item is-primary">Editar</button>
-        <button class="button card-footer-item is-danger">Excluir</button>
+        <button class="button card-footer-item is-primary" data-id="${id}">Editar</button>
+        <button class="button card-footer-item is-danger" data-id="${id}">Excluir</button>
       </footer>
     </div>
   </div>
   `;
   getById('show-actions').insertAdjacentHTML('beforeend', div);
   handleExpandableCards();
+  setupDeleteButtonEvent();
+  setupEditButtonEvent();
 }
 
 function handleExpandableCards() {
@@ -149,4 +152,81 @@ function toggleCardContent(event) {
   if (cardContent) {
     cardContent.classList.toggle('is-hidden');
   }
+}
+
+function updateActions() {
+  getById('actions').value = JSON.stringify(actions);
+}
+
+function removeAction(id) {
+  const index = actions.findIndex(action => action.id === id);
+  if (index !== -1) {
+    actions.splice(index, 1);
+    updateActions();
+  }
+  const elementToRemove = document.querySelector(`[data-id="${id}"]`);
+  if (elementToRemove) {
+    elementToRemove.remove();
+  }
+}
+
+function setupDeleteButtonEvent() {
+  const deleteButtons = document.querySelectorAll('.card-footer-item.is-danger');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const id = button.getAttribute('data-id');
+      if (id) {
+        const modal = getById('confirm-modal');
+        modal.classList.add('is-active');
+        const confirmDeleteButton = getById('confirm-delete');
+        confirmDeleteButton.addEventListener('click', () => {
+          removeAction(id);
+          modal.classList.remove('is-active');
+        });
+        const cancelDeleteButton = getById('cancel-delete');
+        cancelDeleteButton.addEventListener('click', () => {
+          modal.classList.remove('is-active');
+        });
+      }
+    });
+  });
+}
+
+function editAction(id, newValue) {
+  const actionIndex = actions.findIndex(action => action.id === id);
+  if (actionIndex !== -1) {
+    actions[actionIndex].element = newValue;
+    updateActions();
+  }
+}
+
+function setupEditButtonEvent() {
+  const editButtons = document.querySelectorAll('.card-footer-item.is-primary');
+  editButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const id = button.getAttribute('data-id');
+      if (id) {
+        const modal = getById('click-edit-modal');
+        modal.classList.add('is-active');
+        const contentElement = button.closest('.card').querySelector('.content');
+        if (contentElement) {
+          const currentValue = contentElement.textContent || '';
+          const newValueInput = getById('new-value-input');
+          newValueInput.value = currentValue;
+        }
+        const confirmEditButton = getById('confirm-click-edit');
+        confirmEditButton.addEventListener('click', () => {
+          const newValueInput = getById('new-value-input');
+          const newValue = newValueInput.value;
+          contentElement.textContent = newValue;
+          editAction(id, newValue);
+          modal.classList.remove('is-active');
+        });
+        const cancelEditButton = getById('cancel-click-edit');
+        cancelEditButton.addEventListener('click', () => {
+          modal.classList.remove('is-active');
+        });
+      }
+    });
+  });
 }
