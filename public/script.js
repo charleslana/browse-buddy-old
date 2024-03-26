@@ -192,6 +192,17 @@ function setupDeleteButtonEvent() {
   });
 }
 
+function determineActionType(content) {
+  if (content.startsWith('#')) {
+    return '#';
+  } else if (content.startsWith('.')) {
+    return '.';
+  } else if (content.startsWith('xpath/')) {
+    return 'xpath/';
+  }
+  return '#';
+}
+
 function editAction(id, newValue) {
   const actionIndex = actions.findIndex(action => action.id === id);
   if (actionIndex !== -1) {
@@ -212,14 +223,31 @@ function setupEditButtonEvent() {
         if (contentElement) {
           const currentValue = contentElement.textContent || '';
           const newValueInput = getById('new-value-input');
-          newValueInput.value = currentValue;
+          let newValueWithoutType = currentValue;
+          if (currentValue.startsWith('#') || currentValue.startsWith('.')) {
+            newValueWithoutType = currentValue.slice(1);
+          } else if (currentValue.startsWith('xpath/')) {
+            newValueWithoutType = currentValue.slice(6);
+          }
+          newValueInput.value = newValueWithoutType;
+          const currentActionType = determineActionType(currentValue);
+          const typeSelect = getById('new-wait-click-type');
+          typeSelect.value = currentActionType;
         }
         const confirmEditButton = getById('confirm-click-edit');
         confirmEditButton.addEventListener('click', () => {
           const newValueInput = getById('new-value-input');
           const newValue = newValueInput.value;
-          contentElement.textContent = newValue;
-          editAction(id, newValue);
+          const typeSelect = getById('new-wait-click-type');
+          const newType = typeSelect.value;
+          let fullValue = newValue;
+          if (newType !== 'xpath/') {
+            fullValue = newType + newValue;
+          } else {
+            fullValue = 'xpath/' + newValue;
+          }
+          contentElement.textContent = fullValue;
+          editAction(id, fullValue);
           modal.classList.remove('is-active');
         });
         const cancelEditButton = getById('cancel-click-edit');
