@@ -58,6 +58,7 @@ function handleTheme() {
 }
 
 function showModalResult(navigationResults: INavigationResult[]): void {
+  let totalDuration = 0;
   let div = `
     <header class="timeline-header">
       <span class="tag is-medium is-primary">Início</span>
@@ -105,15 +106,43 @@ function showModalResult(navigationResults: INavigationResult[]): void {
         }
         div += '</div>';
         break;
+      case 'end':
+        div += `
+          <div class="timeline-item">
+            <div class="timeline-marker is-primary is-icon">
+              <i class="fa-solid fa-hourglass-end"></i>
+            </div>
+            <div class="timeline-content">
+              <p class="heading">${navigationResult.title}</p>
+              <p>${navigationResult.message}</p>
+            </div>`;
+        if (navigationResult.image) {
+          div += `
+            <div class="timeline-content">
+              <figure class="image is-128x128">
+                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" onclick="openImageModal('${navigationResult.image}')">
+              </figure>
+            </div>`;
+        }
+        div += '</div>';
+        break;
       default:
         break;
     }
-    div += `
+    if (navigationResult.duration) {
+      totalDuration += navigationResult.duration;
+      div += `
       <header class="timeline-header">
         <span class="tag is-info">${navigationResult.duration}s</span>
       </header>
     `;
+    }
   });
+  div += `
+  <header class="timeline-header">
+    <span class="tag is-warning">${parseFloat(totalDuration.toFixed(2))}s</span>
+  </header>
+`;
   div += `
     <header class="timeline-header">
       <span class="tag is-medium is-primary">Fim</span>
@@ -121,55 +150,3 @@ function showModalResult(navigationResults: INavigationResult[]): void {
   `;
   getById('timeline-results')!.innerHTML = div;
 }
-
-// function showModalResult2(): void {
-//   const div = `
-//   <div class="timeline">
-//     <header class="timeline-header">
-//       <span class="tag is-medium is-primary">Início</span>
-//     </header>
-//     <div class="timeline-item">
-//       <div class="timeline-marker is-primary is-icon">
-//         <i class="fa-solid fa-route"></i>
-//       </div>
-//       <div class="timeline-content">
-//         <p class="heading">Navegar para</p>
-//         <p>Navegação para url: https://example.com com sucesso</p>
-//       </div>
-//       <div class="timeline-content">
-//         <figure class="image is-128x128">
-//           <img src="https://bulma.io/assets/images/placeholders/256x256.png" />
-//         </figure>
-//       </div>
-//     </div>
-//     <header class="timeline-header">
-//       <span class="tag is-info">0.5s</span>
-//     </header>
-//     <div class="timeline-item">
-//       <div class="timeline-marker is-primary is-icon">
-//         <i class="fa-solid fa-computer-mouse"></i>
-//       </div>
-//       <div class="timeline-content">
-//         <p class="heading">Clicar e esperar</p>
-//         <p>Aguardar e clicar no elemento: #btn-display-inputs com sucesso</p>
-//       </div>
-//     </div>
-//     <header class="timeline-header">
-//       <span class="tag is-info">0.5s</span>
-//     </header>
-//     <div class="timeline-item">
-//       <div class="timeline-marker is-primary is-icon">
-//         <i class="fa-solid fa-hourglass-end"></i>
-//       </div>
-//       <div class="timeline-content">
-//         <p class="heading">Tela de captura do encerramento</p>
-//         <p>Tela de captura realizada com sucesso</p>
-//       </div>
-//     </div>
-//     <header class="timeline-header">
-//       <span class="tag is-medium is-primary">Fim</span>
-//     </header>
-//   </div>
-//   `;
-//   console.log(div);
-// }
