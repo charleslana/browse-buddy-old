@@ -1,3 +1,5 @@
+window.Sortable = require('sortablejs');
+
 const actions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -138,6 +140,7 @@ function saveClick(element, id) {
   handleExpandableCards();
   setupDeleteButtonEvent();
   setupEditButtonEvent();
+  handleSortable();
 }
 
 function handleExpandableCards() {
@@ -296,5 +299,28 @@ function handleSearchActions() {
     tab.addEventListener('click', function () {
       searchInput.value = '';
     });
+  });
+}
+
+function handleSortable() {
+  const showActions = document.getElementById('show-actions');
+  new Sortable(showActions, {
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    dragClass: 'sortable-drag',
+    onEnd: function (_event) {
+      const cards = showActions.querySelectorAll('.card');
+      const newActions = [];
+      cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        const action = actions.find(action => action.id === id);
+        if (action) {
+          newActions.push(action);
+        }
+      });
+      actions.splice(0, actions.length, ...newActions);
+      updateActions();
+    },
   });
 }

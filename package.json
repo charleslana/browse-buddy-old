@@ -66,6 +66,7 @@
     "dotenv": "^16.4.5",
     "electron-store": "^8.2.0",
     "puppeteer": "^22.6.0",
+    "sortablejs": "^1.15.2",
     "winston": "^3.12.0"
   },
   "devDependencies": {
