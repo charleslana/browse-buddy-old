@@ -7,6 +7,8 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link rel="stylesheet" href="lib/bulma.min.css" />
     <link rel="stylesheet" href="lib/bulma-tooltip.min.css" />
+    <link rel="stylesheet" href="lib/bulma-timeline.min.css" />
+    <link rel="stylesheet" href="lib/modal-fx.min.css" />
     <link rel="stylesheet" href="lib/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -82,11 +84,16 @@
               </div>
             </div>
           </div>
-          <div class="notification is-success is-light is-hidden" id="success-notification">
+          <div class="notification is-success is-light" id="success-notification">
             <button class="delete"></button>
             <div class="buttons">
               <p>O teste foi executado com sucesso.</p>
-              <button class="button is-primary is-dark is-small">Ver resultados</button>
+              <button
+                class="button is-primary is-dark is-small js-modal-trigger"
+                data-target="test-results-modal"
+              >
+                Ver resultados
+              </button>
             </div>
           </div>
           <div class="notification is-danger is-light is-hidden" id="error-notification">
@@ -98,11 +105,13 @@
               <span><i class="fa-solid fa-route"></i></span>
               <span>Navegar para</span>
             </div>
-            <div class="is-flex is-align-items-center is-justify-content-space-between">
-              <button class="button is-info js-modal-trigger" data-target="modal-navigate">
+            <div
+              class="is-flex is-align-items-center is-justify-content-space-between is-flex-wrap-wrap"
+            >
+              <button class="button is-info mb-4 js-modal-trigger" data-target="modal-navigate">
                 Selecione a url
               </button>
-              <div id="url">vazio</div>
+              <div id="url" class="break-words">vazio</div>
             </div>
           </div>
           <div class="box">
@@ -116,23 +125,7 @@
               </span>
               <span>Selecione ação</span>
             </button>
-            <div id="show-actions" class="py-4">
-              <!-- <div class="card is-fullwidth">
-                <header class="card-header card-toggle is-clickable">
-                  <p class="card-header-title">Clicar</p>
-                  <a class="card-header-icon">
-                    <i class="fa-solid fa-angle-down"></i>
-                  </a>
-                </header>
-                <div class="card-content is-hidden">
-                  <div class="content">#btn-display-inputs</div>
-                  <footer class="buttons">
-                    <button class="button card-footer-item is-primary">Editar</button>
-                    <button class="button card-footer-item is-danger">Excluir</button>
-                  </footer>
-                </div>
-              </div> -->
-            </div>
+            <div id="show-actions" class="py-4"></div>
           </div>
           <nav class="level">
             <div class="level-left">
@@ -340,6 +333,44 @@
       </div>
     </div>
     <!-- End modal confirm -->
+    <!-- Modal test results -->
+    <div class="modal modal-full-screen modal-fx-fadeInScale" id="test-results-modal">
+      <div class="modal-content modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Resultados dos testes</p>
+          <button class="modal-button-close delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="timeline" id="timeline-results"></div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="modal-button-close button">Fechar</button>
+        </footer>
+      </div>
+    </div>
+    <!-- End modal test results -->
+    <!-- Modal image -->
+    <div class="modal modal-full-screen modal-fx-fadeInScale" id="modal-image">
+      <div class="modal-content modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Tela de captura</p>
+          <button class="modal-button-close delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <figure class="image is-16by9">
+            <img
+              src="https://bulma.io/assets/images/placeholders/1280x960.png"
+              alt="screenshot"
+              id="modal-src-image"
+            />
+          </figure>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="modal-button-close button">Fechar</button>
+        </footer>
+      </div>
+    </div>
+    <!-- End modal image -->
     <!-- Loading -->
     <div class="overlay" id="overlay-loading">
       <div class="loading">

@@ -125,7 +125,7 @@ function saveClick(element, id) {
       </a>
     </header>
     <div class="card-content is-hidden">
-      <div class="content">${element}</div>
+      <div class="content break-words">${element}</div>
       <footer class="buttons">
         <button class="button card-footer-item is-primary" data-id="${id}">Editar</button>
         <button class="button card-footer-item is-danger" data-id="${id}">Excluir</button>
@@ -257,4 +257,11 @@ function setupEditButtonEvent() {
       }
     });
   });
+}
+
+function openImageModal(base64Image) {
+  const modal = document.getElementById('modal-image');
+  const modalImage = document.getElementById('modal-src-image');
+  modalImage.src = `data:image/png;base64,${base64Image}`;
+  modal?.classList.add('is-active');
 }

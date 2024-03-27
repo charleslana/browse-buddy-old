@@ -16,8 +16,8 @@ app.on('ready', createWindow);
 
 ipcMain.on('navigate', (e, test) => {
   navigate(test)
-    .then(() => {
-      e.sender.send('navigate-reply', 'success');
+    .then(navigationResults => {
+      e.sender.send('navigate-reply', navigationResults);
     })
     .catch((error: Error) => {
       e.sender.send('navigate-error', error.message);

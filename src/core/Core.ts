@@ -3,6 +3,7 @@ import logger from '@utils/logger';
 import path from 'path';
 import { ElementHandle, Page, PuppeteerError } from 'puppeteer';
 import { generateUUID } from '@utils/utils';
+import { IExecutionResult } from '@interface/ITest';
 import { PageSingleton } from './PageSingleton';
 
 class CoreError extends Error {
@@ -16,17 +17,22 @@ export class Core {
   private pageSingleton = PageSingleton.getInstance();
   private _page: Page | null = null;
 
-  public async navigate(url: string, saveScreenshot?: boolean): Promise<void> {
+  public async navigate(url: string, saveScreenshot?: boolean): Promise<IExecutionResult> {
     logger.warn(`Tentando navegar para ${url} ...`);
+    const startTime = Date.now();
     try {
       await this.createPage();
       await this.getPage().goto(url, {
         waitUntil: 'domcontentloaded',
       });
-      if (saveScreenshot) {
-        await this.screenshot(`navigate-${generateUUID()}`);
-      }
       logger.info(`Sucesso ao navegar para ${url}`);
+      let result;
+      if (saveScreenshot) {
+        result = await this.screenshot(`navigate-${generateUUID()}`);
+      }
+      const endTime = Date.now();
+      const duration = (endTime - startTime) / 1000;
+      return { result, duration };
     } catch (e) {
       const error = e as unknown as PuppeteerError;
       logger.error(`Erro ao navegar para ${url}: ${error}`);
@@ -38,15 +44,20 @@ export class Core {
     selector: string,
     id?: string,
     saveScreenshot?: boolean
-  ): Promise<void> {
+  ): Promise<IExecutionResult> {
     logger.warn(`Tentando aguardar e clicar no elemento com seletor ${selector} ...`);
+    const startTime = Date.now();
     try {
       await this.waitForVisible(selector);
       await this.getPage().click(selector);
-      if (saveScreenshot) {
-        await this.screenshot(`wait-click-${id}`);
-      }
       logger.info(`Sucesso ao aguardar e clicar no elemento com seletor ${selector}`);
+      let result;
+      if (saveScreenshot) {
+        result = await this.screenshot(`wait-click-${id}`);
+      }
+      const endTime = Date.now();
+      const duration = (endTime - startTime) / 1000;
+      return { result, duration };
     } catch (e) {
       const error = e as unknown as PuppeteerError;
       logger.error(`Erro ao aguardar e clicar no elemento com seletor ${selector}: ${error}`);
@@ -126,17 +137,21 @@ export class Core {
     }
   }
 
-  public async screenshot(name: string): Promise<void> {
+  public async screenshot(name: string): Promise<string> {
     logger.warn(`Tentando salvar tela de captura ${name} ...`);
     try {
       const screenshotsDir = this.getScreenshotDir();
       if (!fs.existsSync(screenshotsDir)) {
         fs.mkdirSync(screenshotsDir, { recursive: true });
       }
+      const screenshotPath = path.resolve(screenshotsDir, `${name}.png`);
       await this.getPage().screenshot({
         path: path.resolve(screenshotsDir, `${name}.png`),
       });
+      const buffer = fs.readFileSync(screenshotPath);
+      const base64Image = this.bufferToBase64(buffer);
       logger.info(`Sucesso ao salvar tela de captura ${name}`);
+      return base64Image;
     } catch (error) {
       logger.error(`Erro ao salvar tela de captura: ${error}`);
       throw new CoreError(`Erro ao salvar tela de captura: ${error}`);
@@ -166,5 +181,9 @@ export class Core {
       return path.join(process.env.APPDATA || '', 'browse-buddy', 'screenshots');
     }
     throw new CoreError(`Sistema operacional não suportado: ${process.platform}`);
+  }
+
+  private bufferToBase64(buffer: Buffer): string {
+    return buffer.toString('base64');
   }
 }

@@ -27,3 +27,12 @@
   border-radius: 5px;
   color: #000;
 }
+
+.break-words {
+  word-break: break-word;
+}
+
+.modal-card-head,
+.modal-card-foot {
+  border-radius: 0;
+}
