@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   handleClearButton();
   handleModalClick();
   handleActionModal();
+  handleSearchActions();
 });
 
 function handleAddEventListener() {
@@ -264,4 +265,36 @@ function openImageModal(base64Image) {
   const modalImage = document.getElementById('modal-src-image');
   modalImage.src = `data:image/png;base64,${base64Image}`;
   modal?.classList.add('is-active');
+}
+
+function handleSearchActions() {
+  const searchInput = document.querySelector(".panel-block .control input[type='text']");
+  const panelItems = document.querySelectorAll('.panel-block');
+  searchInput.addEventListener('input', function () {
+    const searchText = this.value.toLowerCase();
+    for (let i = 1; i < panelItems.length; i++) {
+      const item = panelItems[i];
+      const itemText = item.textContent.toLowerCase();
+      if (itemText.includes(searchText)) {
+        item.classList.remove('is-hidden');
+      } else {
+        item.classList.add('is-hidden');
+      }
+    }
+  });
+  searchInput.addEventListener('input', function () {
+    const searchText = this.value.toLowerCase();
+    if (searchText === '') {
+      for (let i = 1; i < panelItems.length; i++) {
+        const item = panelItems[i];
+        item.classList.remove('is-hidden');
+      }
+    }
+  });
+  const panelTabs = document.querySelectorAll('.panel-tabs a');
+  panelTabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+      searchInput.value = '';
+    });
+  });
 }

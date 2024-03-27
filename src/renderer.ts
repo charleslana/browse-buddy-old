@@ -80,7 +80,7 @@ function showModalResult(navigationResults: INavigationResult[]): void {
           div += `
             <div class="timeline-content">
               <figure class="image is-128x128">
-                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" onclick="openImageModal('${navigationResult.image}')">
+                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" class="is-clickable" onclick="openImageModal('${navigationResult.image}')">
               </figure>
             </div>`;
         }
@@ -100,7 +100,7 @@ function showModalResult(navigationResults: INavigationResult[]): void {
           div += `
             <div class="timeline-content">
               <figure class="image is-128x128">
-                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" onclick="openImageModal('${navigationResult.image}')">
+                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" class="is-clickable" onclick="openImageModal('${navigationResult.image}')">
               </figure>
             </div>`;
         }
@@ -120,7 +120,7 @@ function showModalResult(navigationResults: INavigationResult[]): void {
           div += `
             <div class="timeline-content">
               <figure class="image is-128x128">
-                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" onclick="openImageModal('${navigationResult.image}')">
+                <img src="data:image/png;base64,${navigationResult.image}" alt="Screenshot" class="is-clickable" onclick="openImageModal('${navigationResult.image}')">
               </figure>
             </div>`;
         }
